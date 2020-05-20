@@ -107,14 +107,14 @@
 
           <div class="TMcalculation">
             <input id="TMcalculationCheckbox" type="checkbox" name="TMcalculationCheckbox">
-            <label id="TMcalculationlabel" class="bottom" for="TMcalculationCheckbox">Tm値を計算</label>
+            <label id="TMcalculationlabel" for="TMcalculationCheckbox">Tm値を計算</label>
             <div class="TMcalculation details">
               <div class="parameter-wrapper">
                 <p class="description">オリゴマー濃度: </p>
                 <input id="concOligo" type="text" name="Ct" value="0.5">
                 <p class="unit"> μM</p>
               </div>
-              <div class="parameter-wrapper bottom">
+              <div class="parameter-wrapper">
                 <p class="description">Na<sup>+</sup>濃度: </p>
                 <input id="concNa" type="text" name="M" value="50">
                 <p class="unit"> mM</p>
@@ -122,6 +122,8 @@
             </div>
           </div>
         </div>
+
+        <div class="bottom-line"></div>
 
         <input id="send" type="submit" name="send" value="解析">
         <h3>結果</h3>
