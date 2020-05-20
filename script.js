@@ -409,7 +409,7 @@ $(function() {
     }
     let processedInputSequence = "";
     for (let i = 0; i < inputSequence.length; i++) {
-      //大文字の塩基の場合はそのまま。ウラシルはbasesCapitalにないので個別に判定。
+      //大文字の塩基の場合はそのまま。
       if (basesCapital.indexOf(inputSequence[i]) !== -1) {
         processedInputSequence = processedInputSequence + inputSequence[i];
       }
