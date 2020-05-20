@@ -148,19 +148,17 @@ $(function() {
   $("#send").click(
     function() {
       let inputList = []
-      if (isFastaFormat($("#inputSequence").val())) {
-        //">"で入力配列を分割。">"はその直後の要素の頭に含める。
-        inputList = $("#inputSequence").val().split(/(?=>)/g);
-      }
-      //配列が一つだけのときはFasta形式でなくても許容
-      else {
-        inputList = [$("#inputSequence").val()];
-      }
+      //改行 + >で入力配列を分割。"\n>"はその直後の要素の頭に含める。
+      inputList = $("#inputSequence").val().split(/(?=\n>)/g);
 
       //NucleotideFastaクラスのインスタンスをqueryListに収納
       let queryList = []
       for (let i = 0; i < inputList.length; i++) {
-        queryList.push(new NucleotideFasta(getName(inputList[i]),getSequence(inputList[i])));
+        //inputList[i]の先頭の連続する改行を除去
+        inputList[i] = inputList[i].replace(/^\n+/, "");
+        if (getName(inputList[i]) !== "NoName" || getSequence(inputList[i]) !== "") {
+          queryList.push(new NucleotideFasta(getName(inputList[i]),getSequence(inputList[i])));
+        }
       }
 
       //answerは個々の結果 (NucleotideFastaインスタンス) を一時的に置くための変数
@@ -387,11 +385,11 @@ $(function() {
   }
 
   const isFastaFormat = function(input) {
-    if (input[0] !== ">" || input.indexOf("\n") === -1) {
-      return false;
+    if (input[0] === ">" && input.indexOf("\n") !== -1) {
+      return true;
     }
     else {
-      return true;
+      return false;
     }
   }
 
