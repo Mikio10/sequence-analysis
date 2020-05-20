@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="jp" dir="ltr">
+
+  <head>
+    <meta charset="utf-8">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="./view/stylesheet.css">
+    <title></title>
+  </head>
+
+  <body>
+
+    <header>
+      <div class="header-wrapper">
+        <img class="telomere" src="./view/images/dna_telomere.png">
+        <h1>塩基配列解析ツール</h1>
+        <img class="double-strand" src="./view/images/double_strand.png">
+      </div>
+    </header>
+
+    <div class="main">
+      <div class="main-wrapper">
+        <h3>塩基配列を入力してください。大文字・小文字は区別されません。</h3>
+        <h3>配列が複数ある場合は必ずFASTA形式で入力してください。</h3>
+        <div class="input-area-wrapper">
+          <textarea id="inputSequence" name="inputSequence" rows="10" cols="80"></textarea>
+          <br>
+          <input id="clear" type="reset" name="clear" value="クリア">
+        </div>
+        <h3>解析の種類を選んでください。</h3>
+        <br>
+        <div class="analysis-type-wrapper">
+          <div class="processing">
+            <input id="processingCheckbox" type="checkbox" name="processingCheckbox">
+            <label for="processingCheckbox">配列の整形</label>
+
+            <div class="processing details">
+              <input id="removeBrCheckbox" type="checkbox" name="removeBrCheckbox">
+              <label for="removeBrCheckbox">塩基以外の文字と改行を除去する</label>
+              <br>
+              <input id="splitIntoBlocksCheckbox" type="checkbox" name="splitIntoBlocksCheckbox">
+              <label for="splitIntoBlocksCheckbox">
+                塩基以外の文字を除去し、
+                <span>
+                  <select id="basesPerLine" name="basesPerLine">
+                    <option value="10">10</option>
+                    <option value="20">20</option>
+                    <option value="30">30</option>
+                    <option value="40">40</option>
+                    <option value="50" selected>50</option>
+                    <option value="60">60</option>
+                    <option value="70">70</option>
+                    <option value="80">80</option>
+                    <option value="90">90</option>
+                    <option value="100">100</option>
+                  </select>
+                </span>
+                文字ごとに改行する
+              </label>
+            </div>
+          </div>
+
+          <div class="reverse">
+            <input id="reverseCheckbox" type="checkbox" name="reverseCheckbox">
+            <label for="reverseCheckbox">相補鎖に変換</label>
+            <div class="reverse details">
+              <input id="toRna" type="checkbox" name="toRna">
+              <label for="toRna">RNA配列を取得</label>
+              <input id="shouldInvert" type="checkbox" name="shouldInvert">
+              <label for="shouldInvert">反転 (3'-->5') </label>
+            </div>
+          </div>
+
+          <div class="translation">
+            <input id="translationCheckbox" type="checkbox" name="translationCheckbox">
+            <label for="translationCheckbox">アミノ酸配列に翻訳</label>
+
+            <div class="translation details">
+              <!--
+              <p>生物種を選択</p>
+              <select class="organism" name="organism">
+                <option value="eucaryote">真核生物</option>
+                <option value="procaryote">原核生物</option>
+                <option value="mitochondria">ミトコンドリア</option>
+              </select>
+              <br>
+            -->
+              <p>読み枠を選択</p>
+              <input id="selectAllFlames" type="checkbox" name="selectAllFlames">
+              <label for="selectAllFlames">すべて選択</label>
+              <br>
+              <input id="flamePos1Checkbox" type="checkbox" name="flamePos1Checkbox">
+              <label for="flamePos1Checkbox">(+)鎖フレーム1</label>
+              <input id="flamePos2Checkbox" type="checkbox" name="flamePos2Checkbox">
+              <label for="flamePos2Checkbox">(+)鎖フレーム2</label>
+              <input id="flamePos3Checkbox" type="checkbox" name="flamePos3Checkbox">
+              <label for="flamePos3Checkbox">(+)鎖フレーム3</label>
+              <br>
+              <input id="flameNeg1Checkbox" type="checkbox" name="flameNeg1Checkbox">
+              <label for="flameNeg1Checkbox">(−)鎖フレーム1</label>
+              <input id="flameNeg2Checkbox" type="checkbox" name="flameNeg2Checkbox">
+              <label for="flameNeg2Checkbox">(−)鎖フレーム2</label>
+              <input id="flameNeg3Checkbox" type="checkbox" name="flameNeg3Checkbox">
+              <label for="flameNeg3Checkbox">(−)鎖フレーム3</label>
+            </div>
+          </div>
+
+          <div class="TMcalculation">
+            <input id="TMcalculationCheckbox" type="checkbox" name="TMcalculationCheckbox">
+            <label id="TMcalculationlabel" class="bottom" for="TMcalculationCheckbox">Tm値を計算</label>
+            <div class="TMcalculation details">
+              <div class="parameter-wrapper">
+                <p class="description">オリゴマー濃度: </p>
+                <input id="concOligo" type="text" name="Ct" value="0.5">
+                <p class="unit"> μM</p>
+              </div>
+              <div class="parameter-wrapper bottom">
+                <p class="description">Na<sup>+</sup>濃度: </p>
+                <input id="concNa" type="text" name="M" value="50">
+                <p class="unit"> mM</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <input id="send" type="submit" name="send" value="解析">
+        <h3>結果</h3>
+        <textarea id="output" name="output" rows="10" cols="80"></textarea>
+        <input id="copyToClipboard" type="button" name="copyToClipboard" value="クリップボードにコピー">
+      </div>
+    </div>
+
+    <script src="./script.js" charset="utf-8"></script>
+  </body>
+</html>
