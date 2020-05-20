@@ -6,6 +6,7 @@ form, input, div {
   margin: 0;
   padding: 0;
 }
+/*CSSのリセット　ここまで*/
 
 body {
   font-family: "ヒラギノ角ゴ Pro W3", "Hiragino Kaku Gothic Pro", "メイリオ", Meiryo, Osaka, "ＭＳ Ｐゴシック", "MS PGothic", "sans-serif";
@@ -14,7 +15,6 @@ body {
 li {
   list-style: none;
 }
-/*CSSのリセット　ここまで*/
 
 header {
   background-color: #b0c4de;
@@ -62,11 +62,11 @@ header h1 {
 }
 
 .main p {
-  padding:10px;
+  padding: 10px;
 }
 
 .main h3 {
-  padding:10px;
+  padding: 10px;
 }
 
 .main textarea {
@@ -107,7 +107,7 @@ input#clear {
 
 .parameter-wrapper {
   padding: 0 10px;
-  width: 700px
+  width: 700px;
 }
 
 p.description {
@@ -123,12 +123,9 @@ p.unit {
   display: inline-block;
 }
 
-.bottom {
-  border-bottom: solid 1px #dcdcdc;
-}
 
 .details label {
-  border:none;
+  border: none;
 }
 
 .translation .details p {
@@ -137,7 +134,14 @@ p.unit {
 
 .translation .details label {
   display: inline-block;
-  width:150px;
+  width: 150px;
+}
+
+.bottom-line {
+  width: 700px;
+  padding: 10px;
+  border-top: solid 1px #dcdcdc;
+  margin-left: 26px;
 }
 
 input#send {
@@ -148,5 +152,5 @@ input#send {
 }
 
 input#copyToClipboard {
-  margin-bottom:50px;
+  margin-bottom: 50px;
 }
