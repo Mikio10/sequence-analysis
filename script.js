@@ -19,7 +19,7 @@ $(function() {
 
   //選択されているチェックボックスのindexをリストで返す
   const getActiveCheckbox = function(checkboxList) {
-    activeCheckboxList = []
+    activeCheckboxList = [];
     for (let i = 0; i < checkboxList.length; i++) {
       if (checkboxList[i].prop("checked")) {
         activeCheckboxList.push(i);
@@ -34,11 +34,6 @@ $(function() {
         $(".TMcalculation").find("input").prop("checked", false);
         $(".processing .details").slideDown();
         $(".TMcalculation .details").slideUp();
-        setTimeout(
-          function() {
-            $("#TMcalculationlabel").addClass("bottom")
-          }
-        ,300);
       }
       else {
         $(".processing .details").slideUp();
@@ -71,11 +66,6 @@ $(function() {
         $(".TMcalculation").find("input").prop("checked", false);
         $(".translation .details").slideUp();
         $(".TMcalculation .details").slideUp();
-        setTimeout(
-          function() {
-            $("#TMcalculationlabel").addClass("bottom")
-          }
-        ,300);
       }
       else {
         $(".reverse .details").slideUp();
@@ -92,11 +82,6 @@ $(function() {
         $(".reverse .details").slideUp();
         $(".TMcalculation").find("input").prop("checked", false);
         $(".TMcalculation .details").slideUp();
-        setTimeout(
-          function() {
-            $("#TMcalculationlabel").addClass("bottom")
-          }
-        ,300);
       }
       else {
         $(".translation .details").slideUp();
@@ -130,16 +115,10 @@ $(function() {
         $(".reverse .details").slideUp();
         $(".translation .details").slideUp();
         $(".TMcalculation .details").slideDown();
-        $("#TMcalculationlabel").removeClass("bottom");
       }
       else {
         $(".TMcalculation .details").slideUp();
         $(".TMcalculation").find("input").prop("checked", false);
-        setTimeout(
-          function() {
-            $("#TMcalculationlabel").addClass("bottom")
-          }
-        ,300);
       }
 
     }
@@ -378,8 +357,11 @@ $(function() {
       }
       return codingAA[index];
     }
-    else {
-      return "."
+    else if (codon.length === 2) {
+      return "..";
+    }
+    else if (codon.length === 1) {
+      return ".";
     }
 
   }
