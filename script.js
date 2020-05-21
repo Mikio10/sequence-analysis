@@ -477,6 +477,8 @@ $(function() {
           split = split + this.sequence.slice(10*i, 10*i + 10) + "\n";
         }
       }
+      //最後のスペースor改行を削除
+      split = split.slice(0,-1);
       return split;
     }
 
