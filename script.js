@@ -1,8 +1,7 @@
 $(function() {
 
   let analysisCheckboxList = [
-    $("#removeBrCheckbox"),
-    $("#splitIntoBlocksCheckbox"),
+    $("#processingCheckbox"),
     $("#reverseCheckbox"),
     $("#translationCheckbox"),
     $("#TMcalculationCheckbox")
@@ -33,6 +32,7 @@ $(function() {
       if ($(this).prop("checked")) {
         $(".TMcalculation").find("input").prop("checked", false);
         $(".processing .details").slideDown();
+        $("#removeBrCheckbox").prop("checked", true);
         $(".TMcalculation .details").slideUp();
       }
       else {
@@ -47,6 +47,9 @@ $(function() {
       if ($(this).prop("checked")) {
         $("#splitIntoBlocksCheckbox").prop("checked", false);
       }
+      else {
+        $(this).prop("checked",true);
+      }
     }
   );
 
@@ -54,6 +57,9 @@ $(function() {
     function() {
       if ($(this).prop("checked")) {
         $("#removeBrCheckbox").prop("checked", false);
+      }
+      else {
+        $(this).prop("checked", true);
       }
     }
   );
@@ -78,6 +84,7 @@ $(function() {
     function() {
       if ($(this).prop("checked")) {
         $(".translation .details").slideDown();
+        $("#flamePos1Checkbox").prop("checked", true);
         $(".reverse").find("input").prop("checked", false);
         $(".reverse .details").slideUp();
         $(".TMcalculation").find("input").prop("checked", false);
@@ -140,6 +147,13 @@ $(function() {
         }
       }
 
+      const shouldSplit = $("#splitIntoBlocksCheckbox").prop("checked");
+      const basesPerLine = $("#basesPerLine option:selected").val();
+      const toRna = $("#toRna").prop("checked");
+      const shouldInvert = $("#shouldInvert").prop("checked");
+      const concOligo = $("#concOligo").val()*1E-6;
+      const concNa = $("#concNa").val()*1E-3;
+
       //answerは個々の結果 (NucleotideFastaインスタンス) を一時的に置くための変数
       let answer = "";
       let output = "";
@@ -148,92 +162,27 @@ $(function() {
       //リストそのままでは比較できないため、JSON形式に変換して条件分岐
       switch (JSON.stringify(getActiveCheckbox(analysisCheckboxList))) {
 
-        //入力配列を整形、改行なし
+        //整形のみ
         case JSON.stringify([0]):
           for (let i = 0; i < queryList.length; i++) {
-            output = output +
-            ">" + queryList[i].name + " | " + queryList[i].len() + " bp" + "\n" +
-            queryList[i].sequence + "\n" + "\n";
+            output = output + queryList[i].outputAsFastaFormat(shouldSplit, basesPerLine);
           }
           $("#output").val(output);
           break;
 
-        //入力配列を整形、改行あり
+        //相補鎖に変換
         case JSON.stringify([1]):
+        case JSON.stringify([0, 1]):
           for (let i = 0; i < queryList.length; i++) {
-            output = output +
-            ">" + queryList[i].name + " | " + queryList[i].len() + " bp" + "\n" +
-            queryList[i].splitSeq($("#basesPerLine option:selected").val()) + "\n" + "\n";
+            answer = queryList[i].reverseSeqWithOptions(toRna,shouldInvert);
+            output = output + answer.outputAsFastaFormat(shouldSplit, basesPerLine);
           }
           $("#output").val(output);
           break;
 
-        //相補鎖に変換、改行なし
+        //翻訳
         case JSON.stringify([2]):
         case JSON.stringify([0, 2]):
-          if ($("#shouldInvert").prop("checked")) {
-            for (let i = 0; i < queryList.length; i++) {
-              answer = new NucleotideFasta(queryList[i].name + "_Reversed_Inverted", queryList[i].reverseSeq($("#toRna").prop("checked"),true));
-              output = output +
-              ">" + answer.name + " | " + answer.len() + " bp" + "\n" +
-              answer.sequence + "\n" + "\n";
-            }
-          }
-          else {
-            for (let i = 0; i < queryList.length; i++) {
-              answer = new NucleotideFasta(queryList[i].name + "_Reversed", queryList[i].reverseSeq($("#toRna").prop("checked"),false));
-              output = output +
-              ">" + answer.name + " | " + answer.len() + " bp" + "\n" +
-              answer.sequence + "\n" + "\n";
-            }
-          }
-          $("#output").val(output);
-          break;
-
-        //相補鎖に変換、改行あり
-        case JSON.stringify([1, 2]):
-          if ($("#shouldInvert").prop("checked")) {
-            for (let i = 0; i < queryList.length; i++) {
-              answer = new NucleotideFasta(queryList[i].name + "_Reversed_Inverted", queryList[i].reverseSeq($("#toRna").prop("checked"),true));
-              output = output +
-              ">" + answer.name + " | " + answer.len() + " bp" + "\n" +
-              answer.splitSeq($("#basesPerLine option:selected").val()) + "\n" + "\n";
-            }
-          }
-          else {
-            for (let i = 0; i < queryList.length; i++) {
-              answer = new NucleotideFasta(queryList[i].name + "_Reversed", queryList[i].reverseSeq($("#toRna").prop("checked"),false));
-              output = output +
-              ">" + answer.name + " | " + answer.len() + " bp" + "\n" +
-              answer.splitSeq($("#basesPerLine option:selected").val()) + "\n" + "\n";
-            }
-          }
-          $("#output").val(output);
-          break;
-
-
-        //翻訳、改行なし
-        case JSON.stringify([3]):
-        case JSON.stringify([0, 3]):
-        for (let i = 0; i < queryList.length; i++) {
-          for (let j = 0; j < getActiveCheckbox(flameCheckboxList).length; j++) {
-            if (getActiveCheckbox(flameCheckboxList)[j] < 3) {
-              flame = getActiveCheckbox(flameCheckboxList)[j] + 1;
-            }
-            else {
-              flame = 2 - getActiveCheckbox(flameCheckboxList)[j];
-            }
-            answer = new ProteinFasta(queryList[i].name + "_Translated_Flame: " + flame, queryList[i].translate(flame));
-            output = output +
-            ">" + answer.name + "\n" +
-            answer.sequence + "\n" + "\n";
-          }
-        }
-        $("#output").val(output);
-        break;
-
-        //翻訳、改行あり
-        case JSON.stringify([1, 3]):
           for (let i = 0; i < queryList.length; i++) {
             for (let j = 0; j < getActiveCheckbox(flameCheckboxList).length; j++) {
               if (getActiveCheckbox(flameCheckboxList)[j] < 3) {
@@ -242,33 +191,29 @@ $(function() {
               else {
                 flame = 2 - getActiveCheckbox(flameCheckboxList)[j];
               }
-              answer = new ProteinFasta(queryList[i].name + "_Translated_Flame: " + flame, queryList[i].translate(flame));
-              output = output +
-              ">" + answer.name + "\n" +
-              answer.splitSeq($("#basesPerLine option:selected").val()) + "\n" + "\n";
+              answer = queryList[i].translate(flame);
+              output = output + answer.outputAsFastaFormat(shouldSplit, basesPerLine);
             }
           }
           $("#output").val(output);
           break;
 
         //Tm値を計算
-        case JSON.stringify([4]):
+        case JSON.stringify([3]):
           for (let i = 0; i < queryList.length; i++) {
             output = output +
-            ">" + queryList[i].name + " | " + queryList[i].len() + " bp" + "\n" +
-            queryList[i].splitSeq(20) + "\n" +
-            "--------------------------------------------------" + "\n" +
+            queryList[i].outputAsFastaFormat(true, 20) +
+            "------------------------------" + "\n" +
             "GC含量: " + Math.round(1000*queryList[i].gc())/10 + " %" + "\n" +
-            "Tm (最近接塩基対法): " + queryList[i].tmNearestNeighbor($("#concOligo").val()*1E-6, $("#concNa").val()*1E-3) + " °C"+ "\n" +
-            "Tm (GC%法): " + queryList[i].tmGC($("#concNa").val()*1E-3) + " °C"+ "\n" +
+            "Tm (最近接塩基対法): " + queryList[i].tmNearestNeighbor(concOligo, concNa) + " °C"+ "\n" +
+            "Tm (GC%法): " + queryList[i].tmGC(concNa) + " °C"+ "\n" +
             "Tm (Wallace法): " + queryList[i].tmWallace() + " °C"+ "\n" +
-            "--------------------------------------------------" + "\n" + "\n";
+            "------------------------------" + "\n" + "\n";
           }
           $("#output").val(output);
           break;
 
         default:
-
           break;
 
       }
@@ -415,42 +360,60 @@ $(function() {
       this.sequence = sequence;
     }
 
-    //RNA配列にするか、3->5に反転させるかを引数とする
-    reverseSeq(toRna, shouldInvert) {
-      let rev = "";
-      if (toRna && shouldInvert) {
-        for (let i = 0; i < this.len(); i++) {
-          rev = rev + counterBasesForRna[basesCapital.indexOf(this.sequence[i])];
+    len() {
+      return this.sequence.length;
+    }
+
+    toDna() {
+      let seq = this.sequence;
+      for (let i = 0; i < this.len(); i++) {
+        if (this.sequence[i] === "U") {
+          seq = seq.slice(0,i) + "T" + seq.slice(i + 1);
         }
       }
-      else if (!toRna && shouldInvert) {
-        for (let i = 0; i < this.len(); i++) {
-          rev = rev + counterBases[basesCapital.indexOf(this.sequence[i])];
+      return (new NucleotideFasta(this.name + "_DNA", seq));
+    }
+
+    toRna() {
+      let seq = this.sequence;
+      for (let i = 0; i < this.len(); i++) {
+        if (this.sequence[i] == "T") {
+          seq = seq.slice(0,i) + "U" + seq.slice(i + 1);
         }
       }
-      else if (toRna && !shouldInvert) {
-        for (let i = 0; i < this.len(); i++) {
-          rev = counterBasesForRna[basesCapital.indexOf(this.sequence[i])] + rev;
-        }
-      }
-      else {
-        for (let i = 0; i < this.len(); i++) {
-          rev = counterBases[basesCapital.indexOf(this.sequence[i])] + rev;
-        }
-      }
-      return rev;
+      return (new NucleotideFasta(this.name + "_RNA", seq))
     }
 
     invertSeq() {
-      let inv = "";
+      let seq = "";
       for (let i = 0; i < this.len(); i++) {
-        inv = inv + this.sequence[i];
+        seq = this.sequence[i] + seq;
       }
-      return inv;
+      return (new NucleotideFasta(this.name + "_Inverted", seq));
     }
 
-    len() {
-      return this.sequence.length;
+    reverseSeq() {
+      let seq = "";
+      for (let i = 0; i < this.len(); i++) {
+        seq = counterBases[basesCapital.indexOf(this.sequence[i])] + seq;
+      }
+      return (new NucleotideFasta(this.name + "_Reversed", seq));
+    }
+
+    //RNA配列にするか、3->5に反転させるかを引数とする
+    reverseSeqWithOptions(toRna, shouldInvert) {
+      if (toRna && shouldInvert) {
+        return this.reverseSeq().toRna().invertSeq();
+      }
+      else if (!toRna && shouldInvert) {
+        return this.reverseSeq().invertSeq();
+      }
+      else if (toRna && !shouldInvert) {
+        return this.reverseSeq().toRna();
+      }
+      else {
+        return this.reverseSeq();
+      }
     }
 
     gc() {
@@ -460,20 +423,6 @@ $(function() {
       (this.sequence.match(/B|V/g)||[]).length*2/3 +
       (this.sequence.match(/H|D/g)||[]).length/3
       )/this.len();
-    }
-
-    //10baseごとに区切って出力。一行あたりn文字で改行
-    splitSeq(n) {
-      let split = "";
-      for (let i = 0; i < this.len()/10; i++) {
-        if (10*(i+1)%n !== 0) {
-          split = split + this.sequence.slice(10*i, 10*i + 10) + " ";
-        }
-        else {
-          split = split + this.sequence.slice(10*i, 10*i + 10) + "\n";
-        }
-      }
-      return split;
     }
 
     tmNearestNeighbor(concOligo, concNa) {
@@ -499,39 +448,63 @@ $(function() {
       return 2*this.len()*(1 - this.gc()) + 4*this.len()*this.gc();
     }
 
-    rnaToDna() {
-      let seq = "";
-      for (let i = 0; i < this.len(); i++) {
-        if (this.sequence[i] === "U") {
-          seq = seq + "T";
-        }
-        else {
-          seq = seq + this.sequence[i];
-        }
-      }
-      return seq;
-    }
-
     translate(flame) {
+      let name = "";
       let peptideSeq = "";
       if (flame > 0) {
+        name = this.name + "_Translated_Flame: " + "+" + flame;
         for (let i = 0; i < this.len() - 2; i+= 3) {
           peptideSeq = peptideSeq + getCodingAA(this.sequence.slice(i + flame - 1, i + flame + 2));
         }
       }
       else {
+        name = this.name + "_Translated_Flame: " + flame
         for (let i = 0; i < this.len() - 2; i+= 3) {
-          peptideSeq = peptideSeq + getCodingAA(this.reverseSeq(false, false).slice(i - flame - 1, i - flame + 2));
+          peptideSeq = peptideSeq + getCodingAA(this.reverseSeqWithOptions(false, false).sequence.slice(i - flame - 1, i - flame + 2));
         }
       }
-      return peptideSeq;
+      return (new ProteinFasta(name, peptideSeq));
+    }
+
+    //10baseごとに区切って出力。一行あたりn文字で改行
+    splitSeq(n) {
+      let split = "";
+      for (let i = 0; i < this.len()/10; i++) {
+        if (10*(i+1)%n !== 0) {
+          split = split + this.sequence.slice(10*i, 10*i + 10) + " ";
+        }
+        else {
+          split = split + this.sequence.slice(10*i, 10*i + 10) + "\n";
+        }
+      }
+      return split;
+    }
+
+    //改行しない場合はn = 0
+    outputAsFastaFormat(shouldSplit, n) {
+      if (shouldSplit) {
+        return ">" + this.name + " | " + this.len() + " bp" + "\n" +
+        this.splitSeq(n) + "\n" + "\n";
+      }
+      else {
+        return ">" + this.name + " | " + this.len() + " bp" + "\n" +
+        this.sequence + "\n" + "\n";
+      }
     }
 
   }
 
-
   class ProteinFasta extends NucleotideFasta {
-
+    outputAsFastaFormat(shouldSplit, n) {
+      if (shouldSplit) {
+        return ">" + this.name + "\n" +
+        this.splitSeq(n) + "\n" + "\n";
+      }
+      else {
+        return ">" + this.name + "\n" +
+        this.sequence + "\n" + "\n";
+      }
+    }
   }
 
 
