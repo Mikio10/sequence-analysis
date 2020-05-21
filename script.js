@@ -155,7 +155,7 @@ $(function() {
       const concNa = $("#concNa").val()*1E-3;
 
       //answerは個々の結果 (NucleotideFastaインスタンス) を一時的に置くための変数
-      let answer = NucleotideFasta("","");
+      let answer = new NucleotideFasta("","");
       let output = "";
       let flame = 1;
 
@@ -397,7 +397,7 @@ $(function() {
       for (let i = 0; i < this.len(); i++) {
         seq = counterBases[basesCapital.indexOf(this.sequence[i])] + seq;
       }
-      return (new NucleotideFasta(this.name + "_Reversed", seq));
+      return (new NucleotideFasta(this.name + "_Complementary", seq));
     }
 
     //RNA配列にするか、3->5に反転させるかを引数とする
