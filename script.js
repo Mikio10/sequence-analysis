@@ -25,7 +25,7 @@ $(function() {
       }
     }
     return activeCheckboxList;
-  }
+  };
 
   $("#processingCheckbox").change(
     function() {
@@ -133,12 +133,12 @@ $(function() {
 
   $("#send").click(
     function() {
-      let inputList = []
+      let inputList = [];
       //改行 + >で入力配列を分割。"\n>"はその直後の要素の頭に含める。
       inputList = $("#inputSequence").val().split(/(?=\n>)/g);
 
       //NucleotideFastaクラスのインスタンスをqueryListに収納
-      let queryList = []
+      let queryList = [];
       for (let i = 0; i < inputList.length; i++) {
         //inputList[i]の先頭の連続する改行を除去
         inputList[i] = inputList[i].replace(/^\n+/, "");
@@ -155,7 +155,7 @@ $(function() {
       const concNa = $("#concNa").val()*1E-3;
 
       //answerは個々の結果 (NucleotideFastaインスタンス) を一時的に置くための変数
-      let answer = "";
+      let answer = NucleotideFasta("","");
       let output = "";
       let flame = 1;
 
@@ -257,7 +257,7 @@ $(function() {
     "GC":-11.1,
     "GG":-11,
     "CC":-11
-  }
+  };
   //単位: cal/(mol K)
   const dS = {
     "AA":-24,
@@ -276,7 +276,7 @@ $(function() {
     "GC":-26.7,
     "GG":-26.6,
     "CC":-26.6
-  }
+  };
 
   //コドンを3ケタの4進数とみなし、これを10進数に変換したものをindexとして文字列からアミノ酸を取得
   const getCodingAA = function(codon) {
@@ -310,7 +310,7 @@ $(function() {
       return ".";
     }
 
-  }
+  };
 
   const isFastaFormat = function(input) {
     if (input[0] === ">" && input.indexOf("\n") !== -1) {
@@ -319,7 +319,7 @@ $(function() {
     else {
       return false;
     }
-  }
+  };
 
   const getName = function(input) {
     if (isFastaFormat(input)) {
@@ -328,7 +328,7 @@ $(function() {
     else {
       return "NoName";
     }
-  }
+  };
 
   const getSequence = function(input) {
     let inputSequence = input;
@@ -351,7 +351,7 @@ $(function() {
       }
     }
     return processedInputSequence;
-  }
+  };
 
 
   class NucleotideFasta {
@@ -381,7 +381,7 @@ $(function() {
           seq = seq.slice(0,i) + "U" + seq.slice(i + 1);
         }
       }
-      return (new NucleotideFasta(this.name + "_RNA", seq))
+      return (new NucleotideFasta(this.name + "_RNA", seq));
     }
 
     invertSeq() {
@@ -430,7 +430,7 @@ $(function() {
       let deltaS = 0;
       let neighbor = "";
       for (let i = 0; i < this.len()-1; i++) {
-        neighbor = this.sequence.slice(i,i+2)
+        neighbor = this.sequence.slice(i,i+2);
         deltaH += dH[neighbor];
         deltaS += dS[neighbor];
       }
