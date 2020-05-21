@@ -343,6 +343,7 @@ $(function() {
           case "A":
             break;
           case "T":
+          case "U":
             index += 1*Math.pow(4,2 - i);
             break;
           case "G":
@@ -515,7 +516,7 @@ $(function() {
       let peptideSeq = "";
       if (flame > 0) {
         for (let i = 0; i < this.len() - 2; i+= 3) {
-          peptideSeq = peptideSeq + getCodingAA(this.rnaToDna().slice(i + flame - 1, i + flame + 2));
+          peptideSeq = peptideSeq + getCodingAA(this.sequence.slice(i + flame - 1, i + flame + 2));
         }
       }
       else {
