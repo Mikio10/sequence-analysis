@@ -147,6 +147,9 @@ $(function() {
         }
       }
 
+      //メソッドをテストしたいときはこの下で出力
+      console.log(queryList[0].getPossibleSeq());
+
       const shouldSplit = $("#splitIntoBlocksCheckbox").prop("checked");
       const basesPerLine = $("#basesPerLine option:selected").val();
       const toRna = $("#toRna").prop("checked");
@@ -239,6 +242,21 @@ $(function() {
   const basesCapital = "ABCDGHKMNRSTUVWY";
   const counterBases = "TVGHCDMKNYSAABWR";
   const counterBasesForRna = "UVGHCDMKNYSAABWR";
+
+  const multipleBases = {
+    "R":["A","G"],
+    "M":["A","C"],
+    "W":["A","T"],
+    "S":["C","G"],
+    "Y":["C","T"],
+    "K":["G","T"],
+    "H":["A","T","C"],
+    "B":["G","T","C"],
+    "D":["G","A","T"],
+    "V":["A","C","G"],
+    "N":["A","T","G","C"]
+  };
+
   //単位: kcal/mol
   const dH = {
     "AA":-9.1,
@@ -258,6 +276,7 @@ $(function() {
     "GG":-11,
     "CC":-11
   };
+
   //単位: cal/(mol K)
   const dS = {
     "AA":-24,
@@ -425,19 +444,55 @@ $(function() {
       )/this.len();
     }
 
-    tmNearestNeighbor(concOligo, concNa) {
-      let deltaH = 0;
-      let deltaS = 0;
-      let neighbor = "";
-      for (let i = 0; i < this.len()-1; i++) {
-        neighbor = this.sequence.slice(i,i+2);
-        deltaH += dH[neighbor];
-        deltaS += dS[neighbor];
+    //縮重塩基を含む場合に、実現し得るすべての配列を返す
+    getPossibleSeq() {
+      let possibleSeqList = [new NucleotideFasta("","")];
+      let newPossibleSeqList = [];
+      let possibleSeq = new NucleotideFasta("","");
+      for (let i = 0; i < this.len(); i++) {
+        //縮重塩基でない場合
+        if (multipleBases[this.sequence[i]] === undefined) {
+          for (let j = 0; j < possibleSeqList.length; j++) {
+            possibleSeqList[j] = new NucleotideFasta("",possibleSeqList[j].sequence + this.sequence[i]);
+          }
+        }
+        else {
+          for (let j = 0; j < possibleSeqList.length; j++) {
+            for (let k = 0; k < multipleBases[this.sequence[i]].length; k++){
+              possibleSeq = possibleSeqList[j];
+              newPossibleSeqList.push(new NucleotideFasta("",possibleSeq.sequence + multipleBases[this.sequence[i]][k]));
+            }
+          }
+          possibleSeqList = newPossibleSeqList;
+          newPossibleSeqList = [];
+        }
       }
-      //気体定数は1.987 cal/(mol K)
-      const tm = 1000*deltaH/(-10.8 + deltaS + 1.987*Math.log(concOligo/4)) - 273.15 + 16.6*Math.log10(concNa);
-      //小数点第一位まで
-      return Math.round(10*tm)/10;
+      return possibleSeqList;
+    }
+
+
+    tmNearestNeighbor(concOligo, concNa) {
+      let tmList = [];
+      //実現しうるすべての配列について最近接塩基対法を適用し、tmListに格納
+      for (let i = 0; i < this.getPossibleSeq().length; i++) {
+        let deltaH = 0;
+        let deltaS = 0;
+        let neighbor = "";
+        for (let j = 0; j < this.getPossibleSeq()[i].len()-1; j++) {
+          neighbor = this.getPossibleSeq()[i].sequence.slice(j,j+2);
+          deltaH += dH[neighbor];
+          deltaS += dS[neighbor];
+        }
+        //気体定数は1.987 cal/(mol K)
+        tmList.push(1000*deltaH/(-10.8 + deltaS + 1.987*Math.log(concOligo/4)) - 273.15 + 16.6*Math.log10(concNa));
+      }
+      //tmListの平均を出す
+      let sum = 0;
+      for (let i = 0; i < tmList.length; i++) {
+        sum += tmList[i];
+      }
+      //少数第一位まで
+      return Math.round(10*sum/tmList.length)/10;
     }
 
     tmGC(concNa) {
