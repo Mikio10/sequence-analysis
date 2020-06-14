@@ -148,7 +148,7 @@ $(function() {
       }
 
       //メソッドをテストしたいときはこの下で出力
-      console.log(queryList[0].getPossibleSeq());
+      //console.log(queryList[0].getPossibleSeq());
 
       const shouldSplit = $("#splitIntoBlocksCheckbox").prop("checked");
       const basesPerLine = $("#basesPerLine option:selected").val();
