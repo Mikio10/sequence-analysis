@@ -239,7 +239,6 @@ $(function() {
   );
 
   const bases = "ABCDGHKMNRSTUVWY";
-  const basesCapital = "ABCDGHKMNRSTUVWY";
   const counterBases = "TVGHCDMKNYSAABWR";
   const counterBasesForRna = "UVGHCDMKNYSAABWR";
 
