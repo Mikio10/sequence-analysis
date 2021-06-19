@@ -242,6 +242,23 @@ $(function() {
   const counterBases = "TVGHCDMKNYSAABWR";
   const counterBasesForRna = "UVGHCDMKNYSAABWR";
 
+  const geneticCode = {"AAA":"K","AAT":"N","AAG":"K","AAC":"N",
+    "ATA":"I","ATT":"I","ATG":"M","ATC":"I",
+    "AGA":"R","AGT":"S","AGG":"R","AGC":"S",
+    "ACA":"T","ACT":"T","ACG":"T","ACC":"T",
+    "TAA":"*","TAT":"Y","TAG":"*","TAC":"Y",
+    "TTA":"L","TTT":"F","TTG":"L","TTC":"F",
+    "TGA":"*","TGT":"C","TGG":"W","TGC":"C",
+    "TCA":"S","TCT":"S","TCG":"S","TCC":"S",
+    "GAA":"E","GAT":"D","GAG":"E","GAC":"D",
+    "GTA":"V","GTT":"V","GTG":"V","GTC":"V",
+    "GGA":"G","GGT":"G","GGG":"G","GGC":"G",
+    "GCA":"A","GCT":"A","GCG":"A","GCC":"A",
+    "CAA":"Q","CAT":"H","CAG":"Q","CAC":"H",
+    "CTA":"L","CTT":"L","CTG":"L","CTC":"L",
+    "CGA":"R","CGT":"R","CGG":"R","CGC":"R",
+    "CCA":"P","CCT":"P","CCG":"P","CCC":"P"}
+
   const multipleBases = {
     "R":["A","G"],
     "M":["A","C"],
@@ -294,40 +311,6 @@ $(function() {
     "GC":-26.7,
     "GG":-26.6,
     "CC":-26.6
-  };
-
-  //コドンを3ケタの4進数とみなし、これを10進数に変換したものをindexとして文字列からアミノ酸を取得
-  const getCodingAA = function(codon) {
-    if (codon.length === 3) {
-      const codingAA = "KNKNIIMIRSRSTTTT*Y*YLFLF*CWCSSSSEDEDVVVVGGGGAAAAQHQHLLLLRRRRPPPP";
-      let index = 0;
-      for (let i = 0; i < 3; i++) {
-        switch (codon[i]) {
-          case "A":
-            break;
-          case "T":
-          case "U":
-            index += 1*Math.pow(4,2 - i);
-            break;
-          case "G":
-            index += 2*Math.pow(4,2 - i);
-            break;
-          case "C":
-            index += 3*Math.pow(4,2 - i);
-            break;
-          default:
-            break;
-        }
-      }
-      return codingAA[index];
-    }
-    else if (codon.length === 2) {
-      return "..";
-    }
-    else if (codon.length === 1) {
-      return ".";
-    }
-
   };
 
   const isFastaFormat = function(input) {
@@ -413,7 +396,7 @@ $(function() {
     reverseSeq() {
       let seq = "";
       for (let i = 0; i < this.len(); i++) {
-        seq = counterBases[basesCapital.indexOf(this.sequence[i])] + seq;
+        seq = counterBases[bases.indexOf(this.sequence[i])] + seq;
       }
       return (new NucleotideFasta(this.name + "_Complementary", seq));
     }
@@ -508,13 +491,13 @@ $(function() {
       if (flame > 0) {
         name = this.name + "_Translated_Flame: " + "+" + flame;
         for (let i = 0; i < this.len() - 2; i+= 3) {
-          peptideSeq = peptideSeq + getCodingAA(this.sequence.slice(i + flame - 1, i + flame + 2));
+          peptideSeq = peptideSeq + geneticCode[this.sequence.slice(i + flame - 1, i + flame + 2)];
         }
       }
       else {
         name = this.name + "_Translated_Flame: " + flame
         for (let i = 0; i < this.len() - 2; i+= 3) {
-          peptideSeq = peptideSeq + getCodingAA(this.reverseSeqWithOptions(false, false).sequence.slice(i - flame - 1, i - flame + 2));
+          peptideSeq = peptideSeq + geneticCode[this.reverseSeqWithOptions(false, false).sequence.slice(i - flame - 1, i - flame + 2)];
         }
       }
       return (new ProteinFasta(name, peptideSeq));
