@@ -238,7 +238,7 @@ $(function() {
     }
   );
 
-  const bases = "abcdghkmnrstuvwy";
+  const bases = "ABCDGHKMNRSTUVWY";
   const basesCapital = "ABCDGHKMNRSTUVWY";
   const counterBases = "TVGHCDMKNYSAABWR";
   const counterBasesForRna = "UVGHCDMKNYSAABWR";
@@ -350,21 +350,21 @@ $(function() {
   };
 
   const getSequence = function(input) {
-    let inputSequence = input;
+    //fasta形式でない場合、inputがそのまま配列になる。すべて大文字に変換
+    let inputSequence = input.toUpperCase();
+    //fasta形式の場合、１つ目の改行以降が配列を表す
     if (isFastaFormat(input)) {
       inputSequence = input.slice(input.indexOf("\n"));
     }
+
+    //配列と関係ない文字を除去したものを格納するための変数
     let processedInputSequence = "";
     for (let i = 0; i < inputSequence.length; i++) {
-      //大文字の塩基の場合はそのまま。
-      if (basesCapital.indexOf(inputSequence[i]) !== -1) {
+      //塩基の場合はそのまま
+      if (bases.indexOf(inputSequence[i]) !== -1) {
         processedInputSequence = processedInputSequence + inputSequence[i];
       }
-      //小文字の塩基の場合は大文字に変換する。
-      else if (bases.indexOf(inputSequence[i]) !== -1) {
-        processedInputSequence = processedInputSequence + basesCapital[bases.indexOf(inputSequence[i])];
-      }
-      //塩基でない記号はスキップされる
+      //塩基でない記号はスキップ
       else {
         ;
       }
