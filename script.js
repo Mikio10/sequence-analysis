@@ -131,7 +131,7 @@ $(function() {
     }
   );
 
-  $("#send").click(
+  $("#analyze").click(
     function() {
       let inputList = [];
       //改行 + >で入力配列を分割。"\n>"はその直後の要素の頭に含める。
