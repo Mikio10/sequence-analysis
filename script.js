@@ -496,7 +496,7 @@ $(function() {
       }
       else {
         name = this.name + "_Translated_Flame: " + flame
-        for (let i = 0; i < this.len() - 2 - flame + 1; i+= 3) {
+        for (let i = 0; i < this.len() - 2 + flame + 1; i+= 3) {
           peptideSeq = peptideSeq + geneticCode[this.reverseSeqWithOptions(false, false).sequence.slice(i - flame - 1, i - flame + 2)];
         }
       }
