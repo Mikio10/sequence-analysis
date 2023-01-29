@@ -137,13 +137,13 @@ $(function() {
       //改行 + >で入力配列を分割。"\n>"はその直後の要素の頭に含める。
       inputList = $("#inputSequence").val().split(/(?=\n>)/g);
 
-      //NucleotideFastaクラスのインスタンスをqueryListに収納
+      //NucleotideクラスのインスタンスをqueryListに収納
       let queryList = [];
       for (let i = 0; i < inputList.length; i++) {
         //inputList[i]の先頭の連続する改行を除去
         inputList[i] = inputList[i].replace(/^\n+/, "");
         if (getName(inputList[i]) !== "NoName" || getSequence(inputList[i]) !== "") {
-          queryList.push(new NucleotideFasta(getName(inputList[i]),getSequence(inputList[i])));
+          queryList.push(new Nucleotide(getName(inputList[i]),getSequence(inputList[i])));
         }
       }
 
@@ -157,8 +157,8 @@ $(function() {
       const concOligo = $("#concOligo").val()*1E-6;
       const concNa = $("#concNa").val()*1E-3;
 
-      //answerは個々の結果 (NucleotideFastaインスタンス) を一時的に置くための変数
-      let answer = new NucleotideFasta("","");
+      //answerは個々の結果 (Nucleotideインスタンス) を一時的に置くための変数
+      let answer = new Nucleotide("","");
       let output = "";
       let flame = 1;
 
@@ -355,7 +355,7 @@ $(function() {
   };
 
 
-  class NucleotideFasta {
+  class Nucleotide {
     constructor(name, sequence) {
       this.name = name;
       this.sequence = sequence;
@@ -372,7 +372,7 @@ $(function() {
           seq = seq.slice(0,i) + "T" + seq.slice(i + 1);
         }
       }
-      return (new NucleotideFasta(this.name + "_DNA", seq));
+      return (new Nucleotide(this.name + "_DNA", seq));
     }
 
     toRna() {
@@ -382,7 +382,7 @@ $(function() {
           seq = seq.slice(0,i) + "U" + seq.slice(i + 1);
         }
       }
-      return (new NucleotideFasta(this.name + "_RNA", seq));
+      return (new Nucleotide(this.name + "_RNA", seq));
     }
 
     invertSeq() {
@@ -390,7 +390,7 @@ $(function() {
       for (let i = 0; i < this.len(); i++) {
         seq = this.sequence[i] + seq;
       }
-      return (new NucleotideFasta(this.name + "_Inverted", seq));
+      return (new Nucleotide(this.name + "_Inverted", seq));
     }
 
     reverseSeq() {
@@ -398,7 +398,7 @@ $(function() {
       for (let i = 0; i < this.len(); i++) {
         seq = counterBases[bases.indexOf(this.sequence[i])] + seq;
       }
-      return (new NucleotideFasta(this.name + "_Complementary", seq));
+      return (new Nucleotide(this.name + "_Complementary", seq));
     }
 
     //RNA配列にするか、3->5に反転させるかを引数とする
@@ -428,21 +428,21 @@ $(function() {
 
     //縮重塩基を含む場合に、実現し得るすべての配列を返す
     getPossibleSeq() {
-      let possibleSeqList = [new NucleotideFasta("","")];
+      let possibleSeqList = [new Nucleotide("","")];
       let newPossibleSeqList = [];
-      let possibleSeq = new NucleotideFasta("","");
+      let possibleSeq = new Nucleotide("","");
       for (let i = 0; i < this.len(); i++) {
         //縮重塩基でない場合
         if (multipleBases[this.sequence[i]] === undefined) {
           for (let j = 0; j < possibleSeqList.length; j++) {
-            possibleSeqList[j] = new NucleotideFasta("",possibleSeqList[j].sequence + this.sequence[i]);
+            possibleSeqList[j] = new Nucleotide("",possibleSeqList[j].sequence + this.sequence[i]);
           }
         }
         else {
           for (let j = 0; j < possibleSeqList.length; j++) {
             for (let k = 0; k < multipleBases[this.sequence[i]].length; k++){
               possibleSeq = possibleSeqList[j];
-              newPossibleSeqList.push(new NucleotideFasta("",possibleSeq.sequence + multipleBases[this.sequence[i]][k]));
+              newPossibleSeqList.push(new Nucleotide("",possibleSeq.sequence + multipleBases[this.sequence[i]][k]));
             }
           }
           possibleSeqList = newPossibleSeqList;
@@ -490,17 +490,17 @@ $(function() {
       let peptideSeq = "";
       if (flame > 0) {
         name = this.name + "_Translated_Flame: " + "+" + flame;
-        for (let i = 0; i < this.len() - 2; i+= 3) {
+        for (let i = 0; i < this.len() - 2 - flame + 1; i+= 3) {
           peptideSeq = peptideSeq + geneticCode[this.sequence.slice(i + flame - 1, i + flame + 2)];
         }
       }
       else {
         name = this.name + "_Translated_Flame: " + flame
-        for (let i = 0; i < this.len() - 2; i+= 3) {
+        for (let i = 0; i < this.len() - 2 - flame + 1; i+= 3) {
           peptideSeq = peptideSeq + geneticCode[this.reverseSeqWithOptions(false, false).sequence.slice(i - flame - 1, i - flame + 2)];
         }
       }
-      return (new ProteinFasta(name, peptideSeq));
+      return (new Protein(name, peptideSeq));
     }
 
     //10baseごとに区切って出力。一行あたりn文字で改行
@@ -532,7 +532,7 @@ $(function() {
 
   }
 
-  class ProteinFasta extends NucleotideFasta {
+  class Protein extends Nucleotide {
     outputAsFastaFormat(shouldSplit, n) {
       if (shouldSplit) {
         return ">" + this.name + "\n" +
