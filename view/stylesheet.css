@@ -54,14 +54,14 @@ header h1 {
   line-height: 90px;
   height: 90px;
   font-size: 30px;
-  letter-spacing: 3px;
+  letter-spacing: 1px;
 }
 
 header h3 {
   line-height: 30px;
   height: 30px;
   font-size: 15px;
-  letter-spacing: 2px;
+  letter-spacing: 1px;
 }
 
 .main {
@@ -158,7 +158,7 @@ p.unit {
   margin-left: 28px;
 }
 
-input#send {
+input#analyze {
   width: 150px;
   font-size: 20px;
   margin: 30px auto;

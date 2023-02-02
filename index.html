@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="jp" dir="ltr">
+<html lang="en-us" dir="ltr">
 
   <head>
     <!-- Global site tag (gtag.js) - Google Analytics -->
@@ -24,8 +24,8 @@
       <div class="header-wrapper">
         <img class="telomere" src="./view/images/dna_telomere.png">
           <div class="header-text-wrapper">
-            <h1>塩基配列解析ツール</h1>
-            <h3>最終更新: 2023/2/2</h3>
+            <h1>DNA Sequence Analysis Tool</h1>
+            <h3>Last update date: Feb. 2, 2023</h3>
           </div>
         <img class="double-strand" src="./view/images/double_strand.png">
       </div>
@@ -33,27 +33,27 @@
 
     <div class="main">
       <div class="main-wrapper">
-        <h3>塩基配列を入力してください。大文字・小文字は区別されません。</h3>
-        <h3>配列が複数ある場合は必ずFASTA形式で入力してください。</h3>
+        <h3>Enter your nucleotide sequence (case-insensitive).</h3>
+        <h3>If you have multiple sequences, enter in FASTA format.</h3>
         <div class="input-area-wrapper">
           <textarea id="inputSequence" name="inputSequence" rows="10" cols="80"></textarea>
           <br>
-          <input id="clear" type="reset" name="clear" value="クリア">
+          <input id="clear" type="reset" name="clear" value="Clear">
         </div>
-        <h3>解析の種類を選んでください。</h3>
+        <h3>Type of analysis</h3>
         <br>
         <div class="analysis-type-wrapper">
           <div class="processing">
             <input id="processingCheckbox" type="checkbox" name="processingCheckbox">
-            <label for="processingCheckbox">配列の整形</label>
+            <label for="processingCheckbox">Sequence Shaping</label>
 
             <div class="processing details">
               <input id="removeBrCheckbox" type="checkbox" name="removeBrCheckbox">
-              <label for="removeBrCheckbox">塩基以外の文字と改行を除去する</label>
+              <label for="removeBrCheckbox">Remove line breaks and non-nucleotide characters</label>
               <br>
               <input id="splitIntoBlocksCheckbox" type="checkbox" name="splitIntoBlocksCheckbox">
               <label for="splitIntoBlocksCheckbox">
-                塩基以外の文字を除去し、
+                Remove non-nucleotide characters and insert line feeds every
                 <span>
                   <select id="basesPerLine" name="basesPerLine">
                     <option value="10">10</option>
@@ -68,25 +68,25 @@
                     <option value="100">100</option>
                   </select>
                 </span>
-                文字ごとに改行する
+                base
               </label>
             </div>
           </div>
 
           <div class="reverse">
             <input id="reverseCheckbox" type="checkbox" name="reverseCheckbox">
-            <label for="reverseCheckbox">相補鎖に変換</label>
+            <label for="reverseCheckbox">Get reverse complementary sequence</label>
             <div class="reverse details">
               <input id="toRna" type="checkbox" name="toRna">
-              <label for="toRna">RNA配列を取得</label>
+              <label for="toRna">Get RNA sequence</label>
               <input id="shouldInvert" type="checkbox" name="shouldInvert">
-              <label for="shouldInvert">反転 (3'-->5') </label>
+              <label for="shouldInvert">Invert sequence (3'-->5') </label>
             </div>
           </div>
 
           <div class="translation">
             <input id="translationCheckbox" type="checkbox" name="translationCheckbox">
-            <label for="translationCheckbox">アミノ酸配列に翻訳</label>
+            <label for="translationCheckbox">Translate to amino acid sequence</label>
 
             <div class="translation details">
               <!--
@@ -98,37 +98,37 @@
               </select>
               <br>
             -->
-              <p>読み枠を選択</p>
+              <p>Reading frame</p>
               <input id="selectAllFlames" type="checkbox" name="selectAllFlames">
-              <label for="selectAllFlames">すべて選択</label>
+              <label for="selectAllFlames">Choose all</label>
               <br>
               <input id="flamePos1Checkbox" type="checkbox" name="flamePos1Checkbox">
-              <label for="flamePos1Checkbox">順鎖・フレーム1</label>
+              <label for="flamePos1Checkbox">Forward frame1</label>
               <input id="flamePos2Checkbox" type="checkbox" name="flamePos2Checkbox">
-              <label for="flamePos2Checkbox">順鎖・フレーム2</label>
+              <label for="flamePos2Checkbox">Forward frame2</label>
               <input id="flamePos3Checkbox" type="checkbox" name="flamePos3Checkbox">
-              <label for="flamePos3Checkbox">順鎖・フレーム3</label>
+              <label for="flamePos3Checkbox">Forward frame3</label>
               <br>
               <input id="flameNeg1Checkbox" type="checkbox" name="flameNeg1Checkbox">
-              <label for="flameNeg1Checkbox">逆鎖・フレーム1</label>
+              <label for="flameNeg1Checkbox">Reverse frame1</label>
               <input id="flameNeg2Checkbox" type="checkbox" name="flameNeg2Checkbox">
-              <label for="flameNeg2Checkbox">逆鎖・フレーム2</label>
+              <label for="flameNeg2Checkbox">Reverse frame2</label>
               <input id="flameNeg3Checkbox" type="checkbox" name="flameNeg3Checkbox">
-              <label for="flameNeg3Checkbox">逆鎖・フレーム3</label>
+              <label for="flameNeg3Checkbox">Reverse frame3</label>
             </div>
           </div>
 
           <div class="TMcalculation">
             <input id="TMcalculationCheckbox" type="checkbox" name="TMcalculationCheckbox">
-            <label id="TMcalculationlabel" for="TMcalculationCheckbox">Tm値を計算</label>
+            <label id="TMcalculationlabel" for="TMcalculationCheckbox">Calculate Tm</label>
             <div class="TMcalculation details">
               <div class="parameter-wrapper">
-                <p class="description">オリゴマー濃度: </p>
+                <p class="description">Oligo conc.: </p>
                 <input id="concOligo" type="text" name="Ct" value="0.5">
                 <p class="unit"> μM</p>
               </div>
               <div class="parameter-wrapper">
-                <p class="description">Na<sup>+</sup>濃度: </p>
+                <p class="description">Na<sup>+</sup> conc. </p>
                 <input id="concNa" type="text" name="M" value="50">
                 <p class="unit"> mM</p>
               </div>
@@ -138,10 +138,10 @@
 
         <div class="bottom-line"></div>
 
-        <input id="analyze" type="submit" name="analyze" value="解析">
-        <h3>結果</h3>
+        <input id="analyze" type="submit" name="analyze" value="Analyze">
+        <h3>Result</h3>
         <textarea id="output" name="output" rows="10" cols="80"></textarea>
-        <input id="copyToClipboard" type="button" name="copyToClipboard" value="クリップボードにコピー">
+        <input id="copyToClipboard" type="button" name="copyToClipboard" value="Copy to clipboard">
       </div>
     </div>
 
