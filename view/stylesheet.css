@@ -28,6 +28,14 @@ header {
   text-align: center;
 }
 
+.header-text-wrapper {
+  display: inline-block;
+  width: 500px;
+  height: 120px;
+  margin: 0px auto;
+  text-align: center;
+}
+
 header img{
   vertical-align: middle;
   height: 120px;
@@ -43,11 +51,17 @@ img.double-strand {
 }
 
 header h1 {
-  display: inline;
-  line-height: 120px;
-  height: 120px;
-  font-size: 40px;
+  line-height: 90px;
+  height: 90px;
+  font-size: 30px;
   letter-spacing: 3px;
+}
+
+header h3 {
+  line-height: 30px;
+  height: 30px;
+  font-size: 15px;
+  letter-spacing: 2px;
 }
 
 .main {
