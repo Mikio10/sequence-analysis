@@ -142,9 +142,10 @@ $(function() {
       for (let i = 0; i < inputList.length; i++) {
         //inputList[i]の先頭の連続する改行を除去
         inputList[i] = inputList[i].replace(/^\n+/, "");
-        if (getName(inputList[i]) !== "NoName" || getSequence(inputList[i]) !== "") {
-          queryList.push(new Nucleotide(getName(inputList[i]),getSequence(inputList[i])));
-        }
+        //if (getName(inputList[i]) !== "NoName" || getSequence(inputList[i]) !== "") {
+        queryList.push(new Nucleotide(getName(inputList[i]),getSequence(inputList[i])));
+        //}
+        console.log(inputList[i],getName(inputList[i]),getSequence(inputList[i]));
       }
 
       //メソッドをテストしたいときはこの下で出力
@@ -370,13 +371,15 @@ $(function() {
   };
 
   const getSequence = function(input) {
-    //fasta形式でない場合、inputがそのまま配列になる。すべて大文字に変換
-    if (!isFastaFormat(input)){
-      let inputSequence = input.toUpperCase();
-    }
+    //配列を一時的に格納する変数
+    let inputSequence = ""
     //fasta形式の場合、１つ目の改行以降が配列を表す
     if (isFastaFormat(input)) {
       inputSequence = input.slice(input.indexOf("\n")).toUpperCase();
+    }
+    //fasta形式でない場合、inputがそのまま配列になる。すべて大文字に変換
+    else {
+      inputSequence = input.toUpperCase();
     }
 
     //配列と関係ない文字を除去したものを格納するための変数
