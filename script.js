@@ -145,7 +145,6 @@ $(function() {
         //if (getName(inputList[i]) !== "NoName" || getSequence(inputList[i]) !== "") {
         queryList.push(new Nucleotide(getName(inputList[i]),getSequence(inputList[i])));
         //}
-        console.log(inputList[i],getName(inputList[i]),getSequence(inputList[i]));
       }
 
       //メソッドをテストしたいときはこの下で出力
