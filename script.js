@@ -371,10 +371,12 @@ $(function() {
 
   const getSequence = function(input) {
     //fasta形式でない場合、inputがそのまま配列になる。すべて大文字に変換
-    let inputSequence = input.toUpperCase();
+    if (!isFastaFormat(input)){
+      let inputSequence = input.toUpperCase();
+    }
     //fasta形式の場合、１つ目の改行以降が配列を表す
     if (isFastaFormat(input)) {
-      inputSequence = input.slice(input.indexOf("\n"));
+      inputSequence = input.slice(input.indexOf("\n")).toUpperCase();
     }
 
     //配列と関係ない文字を除去したものを格納するための変数
