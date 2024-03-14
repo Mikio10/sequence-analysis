@@ -371,7 +371,7 @@ $(function() {
 
   const getSequence = function(input) {
     //配列を一時的に格納する変数
-    let inputSequence = ""
+    let inputSequence = "";
     //fasta形式の場合、１つ目の改行以降が配列を表す
     if (isFastaFormat(input)) {
       inputSequence = input.slice(input.indexOf("\n")).toUpperCase();
@@ -509,7 +509,7 @@ $(function() {
           deltaS += dS[neighbor];
         }
         //気体定数は1.987 cal/(mol K)
-        tmList.push(1000*deltaH/(-10.8 + deltaS + 1.987*Math.log(concOligo/4)) - 273.15 + 16.6*Math.log10(concNa));
+        tmList.push(1000*deltaH/(deltaS + 1.987*Math.log(concOligo/4)) - 273.15 + 16.6*Math.log10(concNa));
       }
       //tmListの平均を出す
       let sum = 0;
